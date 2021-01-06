@@ -20,9 +20,14 @@ import javax.annotation.Resource;
 public class OrderController {
 
     /**
-     * 服务提供者地址
+     * 服务提供者地址,单机
      */
     private static final String PAYMENT_URL = "http://localhost:8001";
+
+    /**
+     * 服务提供者地址,集群
+     */
+    private static final String PAYMENT_URLS = "http://cloud-payment-service";
 
     /**
      * 请求类
@@ -33,13 +38,13 @@ public class OrderController {
     @GetMapping(value = "consumer/payment/create")
     public CommomResult<Payment> create(Payment payment) {
         log.info("******consumer-create接口");
-        return restTemplate.postForObject(PAYMENT_URL + "/payment/create", payment, CommomResult.class);
+        return restTemplate.postForObject(PAYMENT_URLS + "/payment/create", payment, CommomResult.class);
     }
 
     @GetMapping(value = "consumer/payment/get/{id}")
     public CommomResult<Payment> getPaymentById(@PathVariable("id") Long id) {
         log.info("******consumer-get接口");
-        return restTemplate.getForObject(PAYMENT_URL + "/payment/get/" + id, CommomResult.class);
+        return restTemplate.getForObject(PAYMENT_URLS + "/payment/get/" + id, CommomResult.class);
     }
 
 }
