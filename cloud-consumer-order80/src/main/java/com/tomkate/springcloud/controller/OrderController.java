@@ -2,7 +2,10 @@ package com.tomkate.springcloud.controller;
 
 import com.tomkate.springcloud.entities.CommomResult;
 import com.tomkate.springcloud.entities.Payment;
+import com.tomkate.springcloud.lb.LoadBalancer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
+import java.net.URI;
+import java.util.List;
 
 /**
  * @author Tom
@@ -35,6 +40,10 @@ public class OrderController {
      */
     @Resource
     private RestTemplate restTemplate;
+    @Resource
+    private DiscoveryClient discoveryClient;
+    @Resource
+    private LoadBalancer loadBalancer;
 
     @GetMapping(value = "consumer/payment/create")
     public CommomResult<Payment> create(Payment payment) {
@@ -52,11 +61,27 @@ public class OrderController {
     public CommomResult<Payment> getPaymentById2(@PathVariable("id") Long id) {
         ResponseEntity<CommomResult> forEntity = restTemplate.getForEntity(PAYMENT_URLS + "/payment/get/" + id, CommomResult.class);
         if (forEntity.getStatusCode().is2xxSuccessful()) {
-            log.info("statusCode:"+forEntity.getStatusCode()+"\t"+"statusHeads:"+forEntity.getHeaders());
+            log.info("statusCode:" + forEntity.getStatusCode() + "\t" + "statusHeads:" + forEntity.getHeaders());
             return forEntity.getBody();
         } else {
             return new CommomResult(500, "没有对应记录，查询ID：" + id, null);
         }
+    }
+
+    /**
+     * CAS自旋锁实现轮询算法
+     *
+     * @return
+     */
+    @GetMapping(value = "consumer/payment/lb")
+    public String paymentLB() {
+        List<ServiceInstance> instances = discoveryClient.getInstances("cloud-payment-service");
+        if (instances == null || instances.size() < 0) {
+            return null;
+        }
+        ServiceInstance serviceInstance = loadBalancer.instances(instances);
+        URI uri = serviceInstance.getUri();
+        return restTemplate.getForObject(uri + "/payment/lb", String.class);
     }
 
 }
