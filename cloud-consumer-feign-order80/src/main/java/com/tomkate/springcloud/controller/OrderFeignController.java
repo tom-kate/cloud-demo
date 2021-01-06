@@ -26,4 +26,14 @@ public class OrderFeignController {
     public CommomResult<Payment> getPaymentById(@PathVariable("id") Long id) {
         return paymentOpenFeignService.getPaymentById(id);
     }
+
+    /**
+     * 测试feign接口超时
+     *
+     * @return
+     */
+    @GetMapping(value = "consumer/payment/feign/timeout")
+    public String feignTimeout() {
+        return paymentOpenFeignService.feignTimeout();
+    }
 }
