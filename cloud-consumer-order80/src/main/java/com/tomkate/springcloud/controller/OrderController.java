@@ -3,6 +3,7 @@ package com.tomkate.springcloud.controller;
 import com.tomkate.springcloud.entities.CommomResult;
 import com.tomkate.springcloud.entities.Payment;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -45,6 +46,17 @@ public class OrderController {
     public CommomResult<Payment> getPaymentById(@PathVariable("id") Long id) {
         log.info("******consumer-get接口");
         return restTemplate.getForObject(PAYMENT_URLS + "/payment/get/" + id, CommomResult.class);
+    }
+
+    @GetMapping(value = "consumer/payment/getEntity/{id}")
+    public CommomResult<Payment> getPaymentById2(@PathVariable("id") Long id) {
+        ResponseEntity<CommomResult> forEntity = restTemplate.getForEntity(PAYMENT_URLS + "/payment/get/" + id, CommomResult.class);
+        if (forEntity.getStatusCode().is2xxSuccessful()) {
+            log.info("statusCode:"+forEntity.getStatusCode()+"\t"+"statusHeads:"+forEntity.getHeaders());
+            return forEntity.getBody();
+        } else {
+            return new CommomResult(500, "没有对应记录，查询ID：" + id, null);
+        }
     }
 
 }
