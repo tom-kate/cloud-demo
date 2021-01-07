@@ -18,7 +18,7 @@ spring:
             #- After=2021-01-08T16:58:35.812+08:00[Asia/Shanghai]  #断言，时间节点之后才能进行匹配
             #- Before=2021-01-08T16:58:35.812+08:00[Asia/Shanghai]  #断言，时间节点之前才能进行匹配
             #- Between=2021-01-07T16:58:35.812+08:00[Asia/Shanghai],2021-01-08T16:58:35.812+08:00[Asia/Shanghai] #断言，时间节点之间才能进行匹配
-            - Cookie=username,tomkate #断言，根据Cookie能进行匹配
+            #- Cookie=username,tomkate #断言，根据Cookie能进行匹配
             #- Header=X-Request-Id, \d+  # 请求头要有X-Request-Id属性并且值为整数的正则表达式
 
         - id: payment_routh2 #payment_route    #路由的ID，没有固定规则但要求唯一，建议配合服务名
