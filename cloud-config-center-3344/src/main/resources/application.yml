@@ -12,17 +12,30 @@ spring:
           ####搜索目录
           search-paths:
             - springcloud-config
-#          username: baikaixu1@163.com
-#          password: Baikaixu456
-#          force-pull: true
       ####读取分支
       label: master
+#rabbitmq相关配置
+  rabbitmq:
+    host: 192.168.123.179
+    port: 5672
+    username: root
+    password: 22222
 
 #服务注册到eureka地址
 eureka:
   client:
     service-url:
       defaultZone: http://localhost:7001/eureka
+
+##rabbitmq相关配置,暴露bus刷新配置的端点
+management:
+  endpoints: #暴露bus刷新配置的端点
+    web:
+      exposure:
+        include: "bus-refresh"
+
+
+
 
 
 
