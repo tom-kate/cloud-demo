@@ -80,4 +80,9 @@ public class PaymentController {
         }
         return serverPort;
     }
+
+    @GetMapping(value = "payment/getZipkin")
+    public String getPaymentZipkin() {
+        return "服务端 链路检测测试！！！";
+    }
 }
