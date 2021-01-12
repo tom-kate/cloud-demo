@@ -2,6 +2,7 @@ package com.tomkate.springcloud.alibaba.controller;
 
 import com.alibaba.csp.sentinel.annotation.SentinelResource;
 import com.alibaba.csp.sentinel.slots.block.BlockException;
+import com.tomkate.springcloud.alibaba.myhandler.CustomerBlockHandler;
 import com.tomkate.springcloud.entities.CommomResult;
 import com.tomkate.springcloud.entities.Payment;
 import lombok.extern.slf4j.Slf4j;
@@ -49,5 +50,11 @@ public class RateLimitController {
     @SentinelResource(value = "byUrl")
     public CommomResult byUrl() {
         return new CommomResult(200, "按URL限流成功", new Payment(3L, "ok"));
+    }
+
+    @GetMapping(value = "/rateLimit/customerBlockHandler")
+    @SentinelResource(value = "customerBlockHandler", blockHandlerClass = CustomerBlockHandler.class, blockHandler = "handlerException2")
+    public CommomResult customerBlockHandler() {
+        return new CommomResult(200, "按客戶自定义限流", new Payment(3L, "ok"));
     }
 }
